@@ -19,9 +19,8 @@ if __name__ == "__main__":
                 exit]
     print("Alice envoie un message a Bob")
     print("Informations par defaut : ")
-    print("Cle publique de Alice : ()")
-    print("Cle publique de Bob : ()")
-
+    print("Cle publique de Alice : (n : ",alice['n'],", e : ",alice['e'],")")
+    print("Cle publique de Bob : (n : ",bob['n'],", e : ",bob['e'],")")
     while True:
         menu()
         o = int(input())
