@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from math import sqrt
+from math import *
+from random import *
 import os
 
 P_A = 41947
@@ -147,3 +148,47 @@ def afficher_fichier():
         print()
 
     source.close()
+
+def millerRabin(n):
+    """
+        Cryptography Made Simple, Algorithm 2.2 page 30
+        True : Composite
+        False : Probably prime
+    """
+    s = 0
+    m = n - 1
+
+    while m % 2 == 0:
+        s += 1
+        m //= 2
+    
+    k = 100     #k >= 20
+    for j in range(0, k):
+        a = randint(2, n - 2) % n
+        b = fast_exp(a, m, n)
+        if b != 1 and b != (n-1):
+            i = 1
+            while i < s and b != (n-1):
+                b = b*b % n 
+                if b == 1:
+                    return True
+                i += 1
+            if b != (n-1):
+                return True
+    return False
+
+
+
+def get_prime(n):
+    """
+        Genere un nombre premiere de n chiffres
+    """
+    lowerBound = 10**n
+    upperBound = lowerBound * 10
+    p = 0
+    while True:
+        p = randint(lowerBound, upperBound)
+        if not millerRabin(p):
+            break
+    
+    return p

@@ -21,11 +21,14 @@ if __name__ == "__main__":
     print("Informations par defaut : ")
     print("Cle publique de Alice : (n : ",alice['n'],", e : ",alice['e'],")")
     print("Cle publique de Bob : (n : ",bob['n'],", e : ",bob['e'],")")
+
+    my_prime = get_prime(500)
+    print(my_prime)
+
     while True:
         menu()
-        try:
-            o = int(input())
-            if (o > 0 and o < 6):
-                options[o - 1]()
-        except:
-            pass
+        o = int(input())
+        if (o > 0 and o < 6):
+            options[o - 1]()
+    
+    
