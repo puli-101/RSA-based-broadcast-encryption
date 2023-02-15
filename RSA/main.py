@@ -17,13 +17,15 @@ if __name__ == "__main__":
                 dechiffrer_fichier,
                 afficher_fichier,
                 exit]
+    
     print("Alice envoie un message a Bob")
-    print("Informations par defaut : ")
-    print("Cle publique de Alice : (n : ",alice['n'],", e : ",alice['e'],")")
-    print("Cle publique de Bob : (n : ",bob['n'],", e : ",bob['e'],")")
+    print("Generation des cles")
 
-    my_prime = get_prime(500)
-    print(my_prime)
+    (bob['n'],bob['e'],bob['d']) = generate_key()
+    (alice['n'],alice['e'],alice['d']) = generate_key()
+
+    print("Cle publique de Alice : (n : ",hex(alice['n']),", e : ",alice['e'],")")
+    print("Cle publique de Bob : (n : ",hex(bob['n']),", e : ",bob['e'],")")
 
     while True:
         menu()

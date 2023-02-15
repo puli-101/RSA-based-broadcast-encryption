@@ -4,23 +4,8 @@ from math import *
 from random import *
 import os
 
-P_A = 41947
-Q_A = 59281         #P_A et Q_A sont des nombres premieres
-E_A = 1423
-D_A = 1663530607    #D_A et E_A sont des inverses multiplicatifs [mod phi(N_A)]
-N_A = 2486660107    #N_A doit etre le produit de P_A et Q_A
-
-alice = {'p' : P_A, 'q' : Q_A, 'e' : E_A, 'd' : D_A, 'n' : N_A}
-
-P_B = 346207
-Q_B = 14821         #P_B et Q_B sont des nombres premieres
-E_B = 2591          
-D_B = 2265381791    #D_B et E_B sont des inverses multiplicatifs [mod phi(N_B)] 
-N_B = 5131133947    #N_B doit etre le produit de P_B et Q_B
-
-#https://primes.utm.edu/curios/index.php?start=6&stop=6
-
-bob = {'p' : P_B, 'q' : Q_B, 'e' : E_B, 'd' : D_B, 'n' : N_B}
+alice = {'e' : 0, 'd' : 0, 'n' : 0}
+bob = {'e' : 0, 'd' : 0, 'n' : 0}
 
 def fast_exp(x, n, mod):
     """
@@ -67,15 +52,6 @@ def fast_inverse(p, mod):
         x2 = x1
         x1 = x
     return x1
-
-def factor(n):
-    """
-        Algorithme de factorisation de n, on renvoie le premier diviseur != 1
-    """
-    for i in range(2,int(sqrt(n)) + 1):
-        if n % i == 0:
-            return i
-    return -1
 
 def chiffrer_terminal():
     print("Saisissez un message : ", end="")
@@ -162,7 +138,7 @@ def millerRabin(n):
         s += 1
         m //= 2
     
-    k = 100     #k >= 20
+    k = 20     #k >= 20
     for j in range(0, k):
         a = randint(2, n - 2) % n
         b = fast_exp(a, m, n)
@@ -177,14 +153,10 @@ def millerRabin(n):
                 return True
     return False
 
-
-
-def get_prime(n):
+def get_prime_range(lowerBound, upperBound):
     """
-        Genere un nombre premiere de n chiffres
+        Genere nombre premier entre lowerBound et upperBound
     """
-    lowerBound = 10**n
-    upperBound = lowerBound * 10
     p = 0
     while True:
         p = randint(lowerBound, upperBound)
@@ -192,3 +164,47 @@ def get_prime(n):
             break
     
     return p
+
+def get_prime_digits(n):
+    """
+        Genere un nombre premiere de n chiffres
+    """
+    lowerBound = 10**n
+    upperBound = lowerBound * 10
+    return get_prime_range(lowerBound, upperBound)
+
+def get_prime_bits(n):
+    return get_prime_range(2 ** (n - 1),2 ** n)
+
+def pgcd(a,b):
+    if (b == 0):
+        return a
+    return pgcd(b, a%b)
+
+def get_invertible(phi):
+    """
+        Trouve un nombre inversible modulo phi
+    """
+    for i in range(3, phi):
+        if (pgcd(i,phi) == 1):
+            return i
+    return -1
+
+def generate_key():
+    p = get_prime_bits(1024)
+    q = get_prime_bits(1024)
+    n = p * q
+    phi = (p - 1)*(q - 1)
+    e = get_invertible(phi)
+    try:
+        d = fast_inverse(e,phi)
+        return (n,e,d)
+    except:
+        print("Keygen error")
+        print("p : ",p)
+        print("q : ",q)
+        print("n : ",n)
+        print("phi:",phi)
+        print("e : ",e)
+        exit()
+    
