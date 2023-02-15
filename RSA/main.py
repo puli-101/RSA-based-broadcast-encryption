@@ -23,6 +23,9 @@ if __name__ == "__main__":
     print("Cle publique de Bob : (n : ",bob['n'],", e : ",bob['e'],")")
     while True:
         menu()
-        o = int(input())
-        if (o > 0 and o < 6):
-            options[o - 1]()
+        try:
+            o = int(input())
+            if (o > 0 and o < 6):
+                options[o - 1]()
+        except:
+            pass

@@ -14,7 +14,7 @@ alice = {'p' : P_A, 'q' : Q_A, 'e' : E_A, 'd' : D_A, 'n' : N_A}
 P_B = 346207
 Q_B = 14821         #P_B et Q_B sont des nombres premieres
 E_B = 2591          
-D_B = 2265381791    #D_B et E_B sont des inverses multiplicatifs [mod phi(N_B)]
+D_B = 2265381791    #D_B et E_B sont des inverses multiplicatifs [mod phi(N_B)] 
 N_B = 5131133947    #N_B doit etre le produit de P_B et Q_B
 
 #https://primes.utm.edu/curios/index.php?start=6&stop=6
@@ -48,6 +48,24 @@ def get_inverse(p, mod):
         if (i * p) % mod == 1:
             return i
     return -1
+
+def fast_inverse(p, mod):
+    """
+        Taken from "Guide to Elliptic Curve Cryptography"
+    """
+    u = p 
+    v = mod
+    x1 = 1
+    x2 = 0
+    while u != 1:
+        q = v//u 
+        r = v - q * u
+        x = (x2 - q * x1) % mod
+        v = u
+        u = r
+        x2 = x1
+        x1 = x
+    return x1
 
 def factor(n):
     """
