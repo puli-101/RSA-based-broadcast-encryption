@@ -1,0 +1,16 @@
+14/02 - Premier rdvz
+    Implementation RSA
+21/02 - Premiere lecture de l'article
+    Premiere implementation du systeme de diffusion
+
+03/03 - Premier rdvz en dehors 
+    Relecture de l'article 
+    fonction générateur
+             setup  
+             encrypter
+             decrypter 
+    Présentation -> Setup Preliminaries (Kevin)
+                    Encrypter Decrypter (Lounes)
+                    Correctness (David)
+    Fin
+
