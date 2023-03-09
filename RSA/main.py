@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from mon_rsa import *
+from arithmetics import *
+from broadcast_encryption import *
 
 def menu():
     print("-"*20)
@@ -11,7 +12,7 @@ def menu():
     print("5. Fermer")
     print("Option : " ,end="")
 
-if __name__ == "__main__":
+def test_RSA():
     options = [chiffrer_terminal, 
                 chiffrer_fichier,
                 dechiffrer_fichier,
@@ -32,5 +33,18 @@ if __name__ == "__main__":
         o = int(input())
         if (o > 0 and o < 6):
             options[o - 1]()
+
+if __name__ == "__main__":
+    #Exemple d'utilisation
+    N = 8
+    lam = 80 #en nombre de bits recommendation de l'article : 2 ** 80
+    (public_keys, n), private_keys = Setup(N, lam)
+    message = 42
+    T = [0, 1]
+    kT, z = Enc(public_keys, T, message, N, n)
+    decrypted_kT = Dec(private_keys[0], z, n)
+
+    print(kT)
+    print(decrypted_kT)
     
     
