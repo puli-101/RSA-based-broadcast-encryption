@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from math import *
+from math import sqrt
 from random import *
 
 def fast_exp(x, n, mod):
@@ -19,18 +19,6 @@ def fast_exp(x, n, mod):
 
     return exp
 
-def get_inverse(p, mod):
-    """
-        Renvoie inverse multiplicative de p [mod] i.e. q tq p * q = 1 [mod]
-        O(n) pas tres efficace , prend quelques minutes
-        il y a un algorithme d'euclide de complexite logarithmique 
-    """
-    p %= mod
-    for i in range(1, mod):
-        if (i * p) % mod == 1:
-            return i
-    return -1
-
 def fast_inverse(p, mod):
     """
         Taken from "Guide to Elliptic Curve Cryptography"
@@ -48,20 +36,6 @@ def fast_inverse(p, mod):
         x2 = x1
         x1 = x
     return x1
-
-def chiffrer_terminal():
-    print("Saisissez un message : ", end="")
-    msg = str(input())
-
-    f = open("msg_terminal.txt", "w")
-    print("\nMessage chiffre : ",end="")
-    for m in msg:
-        #c = m ^ e [mod n]
-        c = str(fast_exp(ord(m),bob['e'],bob['n']))
-        print(c, end=" ")
-        f.write(c+" ")
-    f.close()
-    print("\n")
 
 def millerRabin(n):
     """
@@ -129,4 +103,32 @@ def get_invertible(phi):
     return -1
 
 
-    
+def chinese_remainder(alpha_p, alpha_q, p, q):
+    """
+        Algorithme associé au théorème chinois de restes
+        on assume que p et q sont deux nombres premiers differents
+    """
+    return (alpha_p * q * get_inverse(q, p) + alpha_q * p * get_inverse(p,q)) % (p*q)
+
+def get_inverse(a, p):
+    """
+        algorithme pour trouver l'inverse de a mod p où p est premier
+    """
+    return pow(a, p - 2, p)
+
+def find_generator(p, primes = []):
+    """
+        etant donne p et la factorisation de phi(p) (la liste primes) on renvoie un generateur de Zp avec p premier > 2
+        (normalement on connait deja la factorisation de phi(p) par le Setup)
+        https://en.wikipedia.org/wiki/Primitive_root_modulo_n
+    """
+    if len(primes) == 0:
+        primes = [2] + [i for i in range(3, p, 2) if (p - 1) % i == 0]
+    def is_generator(g, phi, primes):
+        for prime in primes:
+            if pow(g, phi//prime, p) == 1:
+                return False
+        return True
+    for g in range(2, p):
+        if is_generator(g, p - 1, primes):
+            return g

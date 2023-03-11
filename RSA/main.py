@@ -37,14 +37,20 @@ def test_RSA():
 if __name__ == "__main__":
     #Exemple d'utilisation
     N = 8
-    lam = 80 #en nombre de bits recommendation de l'article : 2 ** 80
-    (public_keys, n), private_keys = Setup(N, lam)
-    message = 42
-    T = [0, 1]
-    kT, z = Enc(public_keys, T, message, N, n)
-    decrypted_kT = Dec(private_keys[0], z, n)
+    lam = 40 #en nombre de bits recommendation de l'article : 2 ** 80
 
-    print(kT)
-    print(decrypted_kT)
+    print("Setting up...")
+    (public_keys, n), private_keys = Setup(N, lam)
+    T = [0, 1]
+    print("Generating encryption key and header...")
+    kT, z = Enc(public_keys, T, N, n)
+    print("k_T :",kT)
+    print("z :",z)
+    print("Decrypting header...")
+    decrypted_kT = Dec(private_keys[0], z, n)
+    if (kT == decrypted_kT):
+        print("Keys match")
+    else:
+        print("Keys don't match")
     
     

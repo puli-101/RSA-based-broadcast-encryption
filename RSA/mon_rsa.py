@@ -78,3 +78,17 @@ def afficher_fichier():
         print()
 
     source.close()
+
+def chiffrer_terminal():
+    print("Saisissez un message : ", end="")
+    msg = str(input())
+
+    f = open("msg_terminal.txt", "w")
+    print("\nMessage chiffre : ",end="")
+    for m in msg:
+        #c = m ^ e [mod n]
+        c = str(fast_exp(ord(m),bob['e'],bob['n']))
+        print(c, end=" ")
+        f.write(c+" ")
+    f.close()
+    print("\n")
