@@ -19,8 +19,8 @@ def get_primes(N, lam):
         #il faut s'assurer qu'ils sont uniques
         if not p in primes:
             primes += [p]
-    p0 = randprime(2 ** lam,2 ** (lam+1))
-    q0 = randprime(2 ** lam,2 ** (lam+1))
+    p0 = randprime(2 ** (lam - 1),2 ** lam)
+    q0 = randprime(2 ** (lam - 1),2 ** lam)
 
     p = 2*p0
     q = 2*q0
@@ -50,7 +50,7 @@ def Setup(N, lam):
         if not millerRabin(p) and not millerRabin(q):
             break
         tries += 1
-        #print("Essais",tries)
+        print("Essais",tries)
     
     
     n = p*q

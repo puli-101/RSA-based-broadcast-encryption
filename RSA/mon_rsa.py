@@ -4,6 +4,37 @@ import os
 alice = {'e' : 0, 'd' : 0, 'n' : 0}
 bob = {'e' : 0, 'd' : 0, 'n' : 0}
 
+def menu():
+    print("-"*20)
+    print("1. Chiffrer un message du clavier")
+    print("2. Chiffrer fichier")
+    print("3. Dechiffrer fichier")
+    print("4. Afficher fichier")
+    print("5. Fermer")
+    print("Option : " ,end="")
+
+def test_RSA():
+    options = [chiffrer_terminal, 
+                chiffrer_fichier,
+                dechiffrer_fichier,
+                afficher_fichier,
+                exit]
+    
+    print("Alice envoie un message a Bob")
+    print("Generation des cles")
+
+    (bob['n'],bob['e'],bob['d']) = generate_key()
+    (alice['n'],alice['e'],alice['d']) = generate_key()
+
+    print("Cle publique de Alice : (n : ",hex(alice['n']),", e : ",alice['e'],")")
+    print("Cle publique de Bob : (n : ",hex(bob['n']),", e : ",bob['e'],")")
+
+    while True:
+        menu()
+        o = int(input())
+        if (o > 0 and o < 6):
+            options[o - 1]()
+
 def generate_key():
     p = get_prime_bits(1024)
     q = get_prime_bits(1024)
