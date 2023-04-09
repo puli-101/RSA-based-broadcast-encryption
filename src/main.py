@@ -7,24 +7,23 @@ from attack import *
 loaded_data = {}
 
 def menu():
+    print("Attention : si les fichiers de teste sont dans le repertoire logs, n'oubliez pas d'ajouter ../logs/ avant le nom du fichier !")
     print("1. Load session (files stored at tests/*.log)")
     print("2. Regenerate numbers")
     print("q to quit")
 
-def regen():
+def regen(N, lam):
     #Exemple d'utilisation
-    N = 8
-    lam = 80 #en nombre de bits recommendation de l'article : 2 ** 80
-
     print("Setting up...")
     (public_keys, n), private_keys = Setup(N, lam)
+    #target users
     T = [0, 1]
     print("Generating encryption key and header...")
     kT, z = Enc(public_keys, T, N, n)
     print("k_T :",kT)
     print("z :",z)
     print("Decrypting header...")
-    decrypted_kT = Dec(private_keys[0], z, n)
+    decrypted_kT = Dec(private_keys[T[-1]], z, n)
     if (kT == decrypted_kT):
         print("Keys match")
     else:
@@ -56,17 +55,20 @@ if __name__ == "__main__":
         menu()
         o = input()
         if int(o) == 1:
-            print("Filename : (si les fichiers sont dans le repertoire logs, n'oubliez pas d'ajouter ../logs/ avant le nom du fichier) ",end="")
+            print("Filename : ",end="")
             file_name = input()
             private_keys, public_keys, lam, N, n = retrieve_data(file_name)
             if (private_keys != None):
+                print("Files loaded successfully...")
                 break
             else:
                 print("File",file_name,"does not exist !")
         elif int(o) == 2:
-            #print("Select number of users :")
-            #N = int(input())
-            private_keys, public_keys, lam, N, n = regen()
+            print("Select number of users [1,100], (8 par defaut) : ",end="")
+            N = int(input())
+            print("Lambda, (80 par defaut) : ",end="")
+            lam = int(input())
+            private_keys, public_keys, lam, N, n = regen(N, lam)
             break
         elif o == "q":
             break

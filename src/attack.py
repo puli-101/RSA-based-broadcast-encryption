@@ -25,14 +25,14 @@ def get_p0_q0(factors, pk, N, n):
     """
         On essaie tous les combinaisons possibles pour trouver p0 et q0
     """
-    for i in range (0, N + 2):
-        p0 = factors[i]
-        for j in range (i + 1, N + 2):
-            q0 = factors[j]
+    if (factors == N):
+        print("Error list of factors doesn't match number of users + 2")
+        exit()
+    for p0 in factors:
+        for q0 in factors:
             matches = 0
-            print("Trying for p0 :", p0,"q0 :",q0)
-            for k in range(j + 1, N + 2):
-                p_l = factors[k]
+            #print("Trying for p0 :", p0,"q0 :",q0)
+            for p_l in factors:
                 for g_l in pk:
                     #les g_l sont d'un certain ordre p0*q0*p_l qu'on cherche
                     if (pow(g_l, p0 * q0 * p_l, n) == 1):
@@ -40,6 +40,8 @@ def get_p0_q0(factors, pk, N, n):
                         break
             if matches == N:
                 return p0, q0 
+            else:
+                print("p0",p0,"q0",q0,"Matches:",matches)
     return None, None
 
 
