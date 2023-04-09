@@ -31,7 +31,6 @@ def get_p0_q0(factors, pk, N, n):
     for p0 in factors:
         for q0 in factors:
             matches = 0
-            #print("Trying for p0 :", p0,"q0 :",q0)
             for p_l in factors:
                 for g_l in pk:
                     #les g_l sont d'un certain ordre p0*q0*p_l qu'on cherche
@@ -40,8 +39,6 @@ def get_p0_q0(factors, pk, N, n):
                         break
             if matches == N:
                 return p0, q0 
-            else:
-                print("p0",p0,"q0",q0,"Matches:",matches)
     return None, None
 
 

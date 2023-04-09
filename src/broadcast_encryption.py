@@ -85,19 +85,6 @@ def Setup(N, lam):
     g_i = [(pow(g, p_bar[i], n)) for i in range(N)]
     y_i = [pow(g_i[i], gamma, n) for i in range(N)]
 
-    """for i in range(0, N):
-        gen = g_i[i]
-        prime = primes[i]
-        expos = pow(gen, p0*prime*q0, n)
-        print(gen, prime, expos)
-    """
-    for gen in g_i:
-        for prime in primes:
-            expos = pow(gen, p0*prime*q0, n)
-            #print(expos)
-            if (expos == 1):
-                print("!")
-
     #gamma_i = gamma mod p_0*q_0*p_i
     private_keys = [gamma % (p0*q0*p_bar[i]) for i in range(N)]
     

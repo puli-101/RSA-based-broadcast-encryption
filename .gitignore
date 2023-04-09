@@ -1,0 +1,5 @@
+texte_brut*
+texte_chiffr*
+__pychache__/*tmp/
+tmp
+tmp/*
