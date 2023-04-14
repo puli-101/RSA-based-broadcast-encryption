@@ -6,11 +6,17 @@ from attack import *
 
 loaded_data = {}
 
-def menu():
-    print("Attention : si les fichiers de teste sont dans le repertoire logs, n'oubliez pas d'ajouter ../logs/ avant le nom du fichier !")
-    print("1. Load session (files stored at tests/*.log)")
-    print("2. Regenerate numbers")
-    print("q to quit")
+def menu(n):
+    if n == 1:
+        print("Attention : si les fichiers de teste sont dans le repertoire logs, n'oubliez pas d'ajouter ../logs/ avant le nom du fichier !")
+        print("1. Load session (files stored at tests/*.log)")
+        print("2. Regenerate numbers")
+        print("q to quit")
+    elif n == 2:
+        print("Select attack type")
+        print("1. 4-sk")
+        print("2. 2-sk")
+        print("q to quit")
 
 def regen(N, lam):
     #Exemple d'utilisation
@@ -52,9 +58,9 @@ if __name__ == "__main__":
     n = None
 
     while True:
-        menu()
+        menu(1)
         o = input()
-        if int(o) == 1:
+        if o == "1":
             print("Filename : ",end="")
             file_name = input()
             private_keys, public_keys, lam, N, n = retrieve_data(file_name)
@@ -63,7 +69,7 @@ if __name__ == "__main__":
                 break
             else:
                 print("File",file_name,"does not exist !")
-        elif int(o) == 2:
+        elif o == "2":
             print("Select number of users [1,100], (8 par defaut) : ",end="")
             N = int(input())
             print("Lambda, (80 par defaut) : ",end="")
@@ -73,7 +79,17 @@ if __name__ == "__main__":
         elif o == "q":
             break
     
-    print("\nSetting up 4-sk attack...")
-    gamma = get_gamma_4sk(private_keys[:4], public_keys, lam, N, n)
+    while True:
+        menu(2)
+        o = input()
+        if o == "1":
+            print("\nSetting up 4-sk attack...")
+            gamma = get_gamma_4sk(private_keys[:4], public_keys, lam, N, n)
+        elif o == "2":
+            print("\nSetting up 2-sk attack...")
+            gamma = get_gamma_2sk(private_keys[:2], public_keys, lam, N, n)
+        elif o == "q":
+            break
+    
 
     

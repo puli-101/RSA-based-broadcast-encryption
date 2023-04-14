@@ -111,6 +111,8 @@ def Setup(N, lam):
     log_dictionary["q0"] = q0
     log_dictionary["p_i"] = primes
     log_dictionary["n"] = n
+    log_dictionary["p"] = p
+    log_dictionary["q"] = q
     save_log()
 
     return ((g_i,y_i), n), private_keys
