@@ -1,5 +1,9 @@
 from arithmetics import *
 from sage.all import *
+from utilities import *
+
+log_dictionary = {}
+debug = False
 
 def get_prime_factors_from_2_sk(gamma_1, gamma_2):
     diff = abs(gamma_1 - gamma_2)
@@ -24,6 +28,7 @@ def filter_batches(liste_1, liste_2, lam):
 def get_p0_q0(factors, pk, N, n):
     """
         On essaie tous les combinaisons possibles pour trouver p0 et q0
+        Peut etre qu'il y a un moyen de faire mieux
     """
     if (factors == N):
         print("Error list of factors doesn't match number of users + 2")
@@ -66,21 +71,24 @@ def get_gamma_4sk(sk, pk, lam, N, n):
         print("! p0 and q0 not found !")
     else:
         print("p0:",p0,"q0:",q0)
-    #gamma = CRT(gamma_1 mod p1_bar, gamma_2 mod p2)
-    return factors
+    
+    return get_all_gammas(p0,q0, factors, sk[0], sk[1])
 
 def get_gamma_2sk(sk, pk, lam, N, n):
     """
         On suppose que le p_1 et p_2 manquants sont dans p ou q
     """
     g_i, y_i = pk
+    #on factorise la difference de deux sk
     batch = get_prime_factors_from_2_sk(sk[0], sk[1])
     
+    #on filtre la liste pour mantenir que les nombres premiers plus grandes que 2**lambda
     factors = []
     for prime in batch:
         if prime >= 2 ** (lam - 1):
             factors += [prime]
     
+    #on factorise n en applicant le pgcd de n et la puissance d'un nombre quelconque mod p
     a = 2
     product = [2] + factors #[2, p0, q0, p_1, ...] sauf p_i et p_j
     p = -1
@@ -106,8 +114,29 @@ def get_gamma_2sk(sk, pk, lam, N, n):
     print("Retrieving p0 and q0...")
     p0, q0 = get_p0_q0(factors, g_i, N, n)
 
-    return factors
+    return get_all_gammas(p0,q0, factors, sk[0], sk[1])
 
+def get_all_gammas(p0, q0, factors, gamma_1, gamma_2):
+    """
+        A partir de p0, q0, deux sk, et la liste de facteurs p_i
+        On extrait la liste de tous les gamma mod p0*q0*(produit de p_i) possibles car on a la congruence
+        gamma [mod p0*q0produit p_i] =  { gamma_1 mod p0*q0*p1_bar
+                                        { gamma_2 mod p1
+    """
+    gamma_lst = []
+    for p_i in factors:
+        if p_i == p0 or p_i == q0:
+            continue
+        mod1 = 1
+        for p in factors:
+            if p != p_i:
+                mod1 *= p
+        #on applique le theoreme des restes chinois
+        gamma = CRT(gamma_1, mod1, gamma_2, p_i)
+        gamma_lst += [gamma]
+        log_dictionary[p_i] = int(gamma) 
+    save_log("gamma_list_", log_dictionary)
+    return gamma_lst
 
 
     

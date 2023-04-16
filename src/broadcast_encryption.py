@@ -4,16 +4,10 @@ from functools import reduce
 from arithmetics import *
 from datetime import datetime
 import json
+from utilities import *
 
 log_dictionary = {}
 debug = False
-
-def save_log():
-    """
-        Fonction pour sauvegarder les nombres generes lors de l'execution
-    """
-    with open("../logs/key-gen_"+str(datetime.now())+".json", 'w') as fp:
-        json.dump(log_dictionary, fp)
 
 def get_primes(N, lam):
     """
@@ -113,7 +107,7 @@ def Setup(N, lam):
     log_dictionary["n"] = n
     log_dictionary["p"] = p
     log_dictionary["q"] = q
-    save_log()
+    save_log("key-gen_", log_dictionary)
 
     return ((g_i,y_i), n), private_keys
 

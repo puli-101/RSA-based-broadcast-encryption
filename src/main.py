@@ -56,7 +56,7 @@ if __name__ == "__main__":
     lam = None
     N = None 
     n = None
-
+    
     while True:
         menu(1)
         o = input()
@@ -79,17 +79,23 @@ if __name__ == "__main__":
         elif o == "q":
             break
     
+
     while True:
         menu(2)
         o = input()
         if o == "1":
             print("\nSetting up 4-sk attack...")
             gamma = get_gamma_4sk(private_keys[:4], public_keys, lam, N, n)
+            break
         elif o == "2":
             print("\nSetting up 2-sk attack...")
             gamma = get_gamma_2sk(private_keys[:2], public_keys, lam, N, n)
-        elif o == "q":
             break
+        elif o == "q":
+            exit()
     
+    print("All possible master keys:",gamma)
+    print("Checking if master key in list...")
+    #...
 
     

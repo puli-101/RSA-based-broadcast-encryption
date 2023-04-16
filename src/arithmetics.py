@@ -109,18 +109,15 @@ def chinese_remainder_prime_modules(alpha_p, alpha_q, p, q):
         on suppose que p et q sont deux nombres premiers differents
     """
     return (alpha_p * q * get_inverse_prime_module(q, p) + alpha_q * p * get_inverse_prime_module(p,q)) % (p*q)
- #gamma = CRT(gamma_1 mod p1_bar*p0*q0, gamma_2 mod p2)
+
 def CRT(gamma_1,modg1,gamma_2,modg2):
     M=modg1*modg2
-    M1=M/modg1
-    M2=M/modg2
+    M1=M % modg1
+    M2=M % modg2
     y1=fast_inverse(M1,modg1)
     y2=fast_inverse(M2,modg2)
     gamma = gamma_1*M1*y1 + gamma_2*M2*y2
     return gamma%M
-
-
- 
 
 def get_inverse_prime_module(a, p):
     """
