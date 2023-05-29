@@ -14,8 +14,9 @@ def menu(n):
         print("q to quit")
     elif n == 2:
         print("Select attack type")
-        print("1. 4-sk")
-        print("2. 2-sk")
+        print("1. multiple sk")
+        print("2. 2-sk gcd")
+        print("3. 2-sk continued fractions")
         print("q to quit")
 
 def regen(N, lam):
@@ -77,19 +78,23 @@ if __name__ == "__main__":
             private_keys, public_keys, lam, N, n = regen(N, lam)
             break
         elif o == "q":
-            break
+            exit(0)
     
 
     while True:
         menu(2)
         o = input()
         if o == "1":
-            print("\nSetting up 4-sk attack...")
-            gamma = get_gamma_4sk(private_keys[:4], public_keys, lam, N, n)
+            print("\nSetting up multiple sk attack...")
+            gamma = get_gamma_multi_sk(private_keys[:4], public_keys, lam, N, n)
             break
         elif o == "2":
-            print("\nSetting up 2-sk attack...")
-            gamma = get_gamma_2sk(private_keys[:2], public_keys, lam, N, n)
+            print("\nSetting up 2-sk gcd attack...")
+            gamma = get_gamma_2sk_gcd(private_keys[:2], public_keys, lam, N, n)
+            break
+        elif o == "3":
+            print("\nSetting up 2-sk continued fractions attack...")
+            gamma = get_gamma_2sk_dev_frac([private_keys[0], private_keys[-1]], public_keys, lam, N, n)
             break
         elif o == "q":
             exit()

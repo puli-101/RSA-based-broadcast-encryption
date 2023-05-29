@@ -1,0 +1,33 @@
+Intro (1-2 pages) :
+      - Cryptographie
+          - Cryptographie hybride (symétrique et asymétrique)
+              - Le problème du partage de la clé du système symétrique
+      - Le problème de la diffusion et du cryptage de diffusion (voir intro de l'article)
+      - Synthèse des travaux effectués (cryptanalyse <i.e. attaque>, puis implémentation)
+
+Le système d'Eskeland (2 pages) :
+    - Préliminaires 
+    - Chiffrement
+    - Dechiffrement
+    - Validité
+
+La mise en œuvre (1 page) :
+      - Choix du langage
+      - bibliothèques
+      - algorithmes arithmétiques sélectionnés
+      - Cas particulier - Les fractions continues et la norme IEEE754
+
+L'attaque et les résultats (4 pages) :
+      - plusieurs clés
+      - factorisation par pgcd
+      - fractions continues
+      - Temps de génération de clé
+      - table temps attaque à plusieurs clés
+      - table temps attaque par pgcd
+      - table temps attaque par des fractions continues
+
+Conclusion (1 page):
+    - ??
+
+Bibliographie :
+    -

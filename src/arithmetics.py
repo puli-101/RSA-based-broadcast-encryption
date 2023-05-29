@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from math import sqrt
 from random import *
+from fractions import Fraction
 
 def fast_exp(x, n, mod):
     """
@@ -157,3 +158,16 @@ def get_bezout(a, b):
         old_s, s = s, old_s - quotient*s
         old_t, t = t, old_t - quotient*t
     return (old_s, old_t)
+
+def get_fraction_from_coefficients(coefs):
+    """
+        Given a list of continued fractions coefficients 
+        it returns a simplified fraction of the same number
+    """
+    if len(coefs) == 1:
+        return Fraction(coefs[0], 1)
+
+    for i in range(len(coefs) - 2, -1, -1):
+        coefs[i] = coefs[i] + Fraction(1, coefs[i + 1])
+    
+    return coefs[0]

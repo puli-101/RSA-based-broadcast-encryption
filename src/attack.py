@@ -5,50 +5,8 @@ from utilities import *
 log_dictionary = {}
 debug = False
 
-def get_prime_factors_from_2_sk(gamma_1, gamma_2):
-    diff = abs(gamma_1 - gamma_2)
-    return ecm.factor(diff)
-
-def filter_batches(liste_1, liste_2, lam):
-    """
-        il faut supprimer les doublon sauf s'ils apparaissent plusieurs fois
-        et les facteurs premiers de taille different a lambda
-    """
-    l = []
-    for x in liste_1:
-        if x >= 2**(lam-1):
-            l += [x]
-    for i in range(0, len(liste_2)):
-        x = liste_2[i]
-        if x >= 2 ** (lam - 1) and (not (x in liste_1) or liste_1.count(x) < liste_2[i:].count(x)):
-            l += [x]
-    return l
-
-
-def get_p0_q0(factors, pk, N, n):
-    """
-        On essaie tous les combinaisons possibles pour trouver p0 et q0
-        Peut etre qu'il y a un moyen de faire mieux
-    """
-    if (factors == N):
-        print("Error list of factors doesn't match number of users + 2")
-        exit()
-    for p0 in factors:
-        for q0 in factors:
-            found = False
-            for g_l in pk:
-                for p_l in factors:
-                    #les g_l sont d'un certain ordre p0*q0*p_l qu'on cherche
-                    if (pow(g_l, p0 * q0 * p_l, n) == 1):
-                        found = True
-                        break
-            if found:
-                return p0, q0 
-    return None, None
-
-
-
-def get_gamma_4sk(sk, pk, lam, N, n):
+####### Basic Attack
+def get_gamma_multi_sk(sk, pk, lam, N, n):
     """
         Algorithme heuristique pour trouver gamma mod produit p_i 
         a partir de 4 cle secretes (sk), la taille en nombre de bits de chaque p_i (lam i.e. lambda)
@@ -74,19 +32,14 @@ def get_gamma_4sk(sk, pk, lam, N, n):
     
     return get_all_gammas(p0,q0, factors, sk[0], sk[1])
 
-def get_gamma_2sk(sk, pk, lam, N, n):
+############# GCD-based Attack
+def get_gamma_2sk_gcd(sk, pk, lam, N, n):
     """
         On suppose que le p_1 et p_2 manquants sont dans p ou q
+        Factorisation utilisant le pgcd en se basant sur le theoreme de Fermat
     """
-    g_i, y_i = pk
-    #on factorise la difference de deux sk
-    batch = get_prime_factors_from_2_sk(sk[0], sk[1])
-    
-    #on filtre la liste pour mantenir que les nombres premiers plus grandes que 2**lambda
-    factors = []
-    for prime in batch:
-        if prime >= 2 ** (lam - 1):
-            factors += [prime]
+    #exctraction des facteurs connus
+    factors = get_factors(sk,pk,lam)
     
     #on factorise n en applicant le pgcd de n et la puissance d'un nombre quelconque mod p
     a = 2
@@ -105,6 +58,7 @@ def get_gamma_2sk(sk, pk, lam, N, n):
         print("n-Factoring successful")
         print("p:",p)
         print("q:",q)
+        exit(0)
     else:
         print("Unable to factor n")
         exit(-1)
@@ -116,9 +70,77 @@ def get_gamma_2sk(sk, pk, lam, N, n):
 
     return get_all_gammas(p0,q0, factors, sk[0], sk[1])
 
+########## Continued Fractions Attack
+def is_missing_primes(approx, product, n):
+    """
+        teste si l'approximation approx = a/b 
+        est egal a 1/p_l * p_2l i.e. les 
+    """
+    approx = Fraction(1, approx)
+    if approx.numerator != 1:
+        return False
+    factors = ecm.factor(approx.numerator)
+    if (len(factors) != 2):
+        return False
+    p = factors[0]
+    q = factors[1]
+    print("!viable factors : ", factors)
+    #si p et q sont les bons alors 
+    #pour tout x dans Zn, x ^ (product * p * q) = 1 mod n
+    for i in range(0,20):
+        x = randint(2, n - 2)
+        if pow(x, product * p * q, n) != 1:
+            return False
+
+    return True
+
+def find_primes_from_product_over_n(product,n):
+    """
+        On recree le developpement en fraction continue de kt/n 
+        ou product est le produit des facteurs premiers de p - 1 et q - 1 connus et n = p*q
+        A chaque etape du developpement on teste si on a deja trouve les valeurs des nombres premiers manquants
+        On retourne les valeurs des p_i et p_j manquants
+    """
+    coefs = []
+    fraction = Fraction(int(product), n)
+    while True:
+        #algorithme du dev en fraction continue
+        real = fraction.numerator//fraction.denominator
+        fraction = fraction - real
+        coefs.append(real)
+
+        #test a chaque etape si l'approximation courante est les p_i et p_j qui manquent
+        approx = get_fraction_from_coefficients(coefs.copy())
+        if approx.numerator != 0 and is_missing_primes(approx, product, n):
+            return approx 
+        
+        if fraction.numerator == 0:
+            break
+        fraction = Fraction(fraction.denominator, fraction.numerator)
+    
+    return None
+
+def get_gamma_2sk_dev_frac(sk, pk, lam, N, n):
+    #extraction des facteurs premiers connus de p - 1 et q - 1 ou n = p*q
+    factors = get_factors(sk,pk,lam)
+    print(factors)
+    product = 1
+    for f in factors:
+        product *= f
+    print("product", product)
+    approx = find_primes_from_product_over_n(product, n)
+    if approx == None:
+        print("Fatal Error: unable to factor p - 1 and q - 1")
+    
+    missing = ecm.factor(Fraction(1, approx).numerator)
+    print(missing)
+    
+
+############### Supplementary functions 
+
 def get_all_gammas(p0, q0, factors, gamma_1, gamma_2):
     """
-        A partir de p0, q0, deux sk, et la liste de facteurs p_i
+        A partir de p0, q0, deux sk, et la liste des facteurs p_i
         On extrait la liste de tous les gamma mod p0*q0*(produit de p_i) possibles car on a la congruence
         gamma [mod p0*q0produit p_i] =  { gamma_1 mod p0*q0*p1_bar
                                         { gamma_2 mod p1
@@ -138,5 +160,61 @@ def get_all_gammas(p0, q0, factors, gamma_1, gamma_2):
     save_log("gamma_list_", log_dictionary)
     return gamma_lst
 
+def get_p0_q0(factors, pk, N, n):
+    """
+        On essaie tous les combinaisons possibles pour trouver p0 et q0
+        Peut etre qu'il y a un moyen de faire mieux
+    """
+    if (factors == N):
+        print("Error list of factors doesn't match number of users + 2")
+        exit()
+    for p0 in factors:
+        for q0 in factors:
+            found = False
+            for g_l in pk:
+                for p_l in factors:
+                    #les g_l sont d'un certain ordre p0*q0*p_l qu'on cherche
+                    if (pow(g_l, p0 * q0 * p_l, n) == 1):
+                        found = True
+                        break
+            if found:
+                return p0, q0 
+    return None, None
 
+
+########### Auxiliary Functions
+
+def get_prime_factors_from_2_sk(gamma_1, gamma_2):
+    """
+        Factorisation de la difference de deux sk
+    """
+    diff = abs(gamma_1 - gamma_2)
+    return ecm.factor(diff)
+
+def filter_batches(liste_1, liste_2, lam):
+    """
+        Fonction pour supprimer les valeurs dupliquees 
+        et les nombres premiers de bitsize differente a lambda
+    """
+    l = []
+    for x in liste_1:
+        if x >= 2**(lam-1):
+            l += [x]
+    for i in range(0, len(liste_2)):
+        x = liste_2[i]
+        if x >= 2 ** (lam - 1) and (not (x in liste_1) or liste_1.count(x) < liste_2[i:].count(x)):
+            l += [x]
+    return l
+
+def get_factors(sk,pk,lam):
+    g_i, y_i = pk
+    #on factorise la difference de deux sk
+    batch = get_prime_factors_from_2_sk(sk[0], sk[1])
     
+    #on filtre la liste pour mantenir que les nombres premiers plus grandes que 2**lambda
+    factors = []
+    for prime in batch:
+        if prime >= 2 ** (lam - 1):
+            factors += [prime]
+    
+    return factors
