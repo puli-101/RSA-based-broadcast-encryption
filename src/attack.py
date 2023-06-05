@@ -3,7 +3,7 @@ from sage.all import *
 from utilities import *
 
 log_dictionary = {}
-debug = False
+debug = True
 
 ####### Basic Attack
 def get_gamma_multi_sk(sk, pk, lam, N, n):
@@ -30,7 +30,7 @@ def get_gamma_multi_sk(sk, pk, lam, N, n):
     else:
         print("p0:",p0,"q0:",q0)
     
-    return get_all_gammas(p0,q0, factors, sk[0], sk[1])
+    #return get_all_gammas(p0,q0, factors, sk[0], sk[1])
 
 ############# GCD-based Attack
 def get_gamma_2sk_gcd(sk, pk, lam, N, n):
@@ -68,35 +68,32 @@ def get_gamma_2sk_gcd(sk, pk, lam, N, n):
     print("Retrieving p0 and q0...")
     p0, q0 = get_p0_q0(factors, g_i, N, n)
 
-    return get_all_gammas(p0,q0, factors, sk[0], sk[1])
+    #return get_all_gammas(p0,q0, factors, sk[0], sk[1])
 
 ########## Continued Fractions Attack
-def is_missing_primes(approx, product, n):
+def is_missing_primes(approx, product, lam, n):
     """
         teste si l'approximation approx = a/b 
         est egal a 1/p_l * p_2l i.e. les 
     """
     approx = Fraction(1, approx)
-    if approx.numerator != 1:
+    if approx.denominator != 1:
         return False
-    factors = ecm.factor(approx.numerator)
-    if (len(factors) != 2):
-        return False
-    p = factors[0]
-    q = factors[1]
-    print("!viable factors : ", factors)
-    #si p et q sont les bons alors 
-    #pour tout x dans Zn, x ^ (product * p * q) = 1 mod n
+    
+    print("Testing possible solution")
+    #si l'approximation est bonne 
+    #pour tout x dans Zn, x ^ (product * approx) = 1 mod n
     for i in range(0,20):
         x = randint(2, n - 2)
-        if pow(x, product * p * q, n) != 1:
+        if pow(x, product * approx.numerator, n) != 1:
+            print("exit")
             return False
 
     return True
 
-def find_primes_from_product_over_n(product,n):
+def find_primes_from_product_over_n(product, lam, n):
     """
-        On recree le developpement en fraction continue de kt/n 
+        On recree le developpement en fraction continue de product/n 
         ou product est le produit des facteurs premiers de p - 1 et q - 1 connus et n = p*q
         A chaque etape du developpement on teste si on a deja trouve les valeurs des nombres premiers manquants
         On retourne les valeurs des p_i et p_j manquants
@@ -111,7 +108,8 @@ def find_primes_from_product_over_n(product,n):
 
         #test a chaque etape si l'approximation courante est les p_i et p_j qui manquent
         approx = get_fraction_from_coefficients(coefs.copy())
-        if approx.numerator != 0 and is_missing_primes(approx, product, n):
+        
+        if approx.numerator != 0 and is_missing_primes(approx, product, lam, n):
             return approx 
         
         if fraction.numerator == 0:
@@ -122,18 +120,20 @@ def find_primes_from_product_over_n(product,n):
 
 def get_gamma_2sk_dev_frac(sk, pk, lam, N, n):
     #extraction des facteurs premiers connus de p - 1 et q - 1 ou n = p*q
+    print("Retrieving all known prime factors of phi(n)...")
     factors = get_factors(sk,pk,lam)
     print(factors)
     product = 1
     for f in factors:
         product *= f
-    print("product", product)
-    approx = find_primes_from_product_over_n(product, n)
+    if debug:
+        print("Product", product)
+    approx = find_primes_from_product_over_n(product, lam, n)
     if approx == None:
         print("Fatal Error: unable to factor p - 1 and q - 1")
     
     missing = ecm.factor(Fraction(1, approx).numerator)
-    print(missing)
+    print("Missing primes : ", missing)
     
 
 ############### Supplementary functions 

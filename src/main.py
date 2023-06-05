@@ -99,8 +99,8 @@ if __name__ == "__main__":
         elif o == "q":
             exit()
     
-    print("All possible master keys:",gamma)
-    print("Checking if master key in list...")
+    #print("All possible master keys:",gamma)
+    #print("Checking if master key in list...")
     #...
 
     

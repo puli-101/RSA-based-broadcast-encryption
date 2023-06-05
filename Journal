@@ -24,3 +24,5 @@
         (avec des nombres assez grands comme dans l'article il fait environ 10 000 essais pour 8 personnes avec des nombres premiers de 80 bits
 11/03 - Commit
     theoreme chinois des restes 
+
+!!!!!! l'attaque avec des fractions continues ne marche que si p0 et q0 sont de taille 2*lambda

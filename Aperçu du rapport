@@ -9,7 +9,9 @@ Intro (2 pages) :
       - Synthèse des travaux effectués (cryptanalyse <i.e. attaque>, puis implémentation)
 
 Le système d'Eskeland (2 pages) :
+    - petite explication du systeme et le but du systeme
     - Préliminaires / Setup
+    - Table de valeurs possibles pour lambda
     - Chiffrement
     - Dechiffrement
     - Validité

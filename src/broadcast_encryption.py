@@ -25,8 +25,8 @@ def get_primes(N, lam):
         #il faut s'assurer qu'ils sont uniques
         if not p in primes:
             primes += [p]
-    p0 = randprime(2 ** (lam - 1),2 ** lam)
-    q0 = randprime(2 ** (lam - 1),2 ** lam)
+    p0 = randprime(2 ** (2 * lam - 1),2 ** (2 * lam))
+    q0 = randprime(2 ** (2 * lam - 1),2 ** (2 * lam))
 
     p = 2*p0
     q = 2*q0
