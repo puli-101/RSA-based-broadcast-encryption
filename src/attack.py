@@ -74,7 +74,7 @@ def get_gamma_2sk_gcd(sk, pk, lam, N, n):
 def is_missing_primes(approx, product, lam, n):
     """
         teste si l'approximation approx = a/b 
-        est egal a 1/p_l * p_2l i.e. les 
+        est egal a 1/(4 * p_l * p_2l) i.e. les 
     """
     approx = Fraction(1, approx)
     if approx.denominator != 1:
@@ -83,6 +83,7 @@ def is_missing_primes(approx, product, lam, n):
     print("Testing possible solution")
     #si l'approximation est bonne 
     #pour tout x dans Zn, x ^ (product * approx) = 1 mod n
+
     for i in range(0,20):
         x = randint(2, n - 2)
         if pow(x, product * approx.numerator, n) != 1:
