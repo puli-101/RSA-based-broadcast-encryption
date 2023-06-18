@@ -9,38 +9,34 @@ from utilities import *
 log_dictionary = {}
 debug = False
 
-def get_primes(N, lam):
+def get_half_primes(N, lam, secondHalf):
     """
         Cela fait partie du Setup
-        On genere N nombres premiers de taille environ lambda
-        Retour :    liste des N nbrs premiers,
-                    p0
-                    q0
+        On genere N/2 nombres premiers de taille environ lambda
+        Retour :    liste des N/2 nbrs premiers,
+                    p0 un nombre premier de taille 2lambda
                     p = 2p0 * PI(p_i) + 1
-                    q = 2q0 * PI(p_j) + 1
     """
     primes = []
-    while len(primes) < N:
+    remainder = 0
+    if N % 2 != 0 and not secondHalf:
+        remainder = 1
+    
+    while len(primes) < ((N//2) + remainder):
         p = randprime(2 ** (lam - 1),2 ** lam)
         #il faut s'assurer qu'ils sont uniques
         if not p in primes:
             primes += [p]
     p0 = randprime(2 ** (2 * lam - 1),2 ** (2 * lam))
-    q0 = randprime(2 ** (2 * lam - 1),2 ** (2 * lam))
 
     p = 2*p0
-    q = 2*q0
 
-    for i in range (0, round(N/2)):
-        p *= primes[i]
-        q *= primes[i+round(N/2)]
-    if (N%2 == 1):
-        q *= primes[-1]
+    for prime in primes:
+        p *= prime
 
     p += 1
-    q += 1
 
-    return (primes, p0, q0, p, q)
+    return (primes, p0, p)
     
 def Setup(N, lam):
     primes = []
@@ -49,15 +45,25 @@ def Setup(N, lam):
     p = 0
     q = 0
     tries = 0
-    print("Calcul de p et q...")
+    print("Calcul de p...")
     while True:
-        (primes, p0, q0, p, q) = get_primes(N, lam)
+        (primes, p0, p) = get_half_primes(N, lam, False)
         #on itere jusqu'a ce qu'on trouve p et q premiers -> test miller rabin
-        if not millerRabin(p) and not millerRabin(q):
+        if not millerRabin(p):
             break
         tries += 1
         #print("Essais",tries)
-    
+    print("p found after",tries,"tries")
+    tries = 0
+    print("Calcul de q...")
+    while True:
+        (secondHalf, q0, q) = get_half_primes(N, lam, True)
+        if not millerRabin(q):
+            break
+        tries += 1
+        #print("Essais",tries)
+    print("q found after",tries,"tries")
+    primes += secondHalf
     n = p*q
     gamma = randint(n, 2*n)
     p_bar = []
