@@ -7,6 +7,10 @@ from attack import *
 loaded_data = {}
 
 def menu(n):
+    """
+        Menu d'options d'execution
+    """
+
     if n == 1:
         print("Attention : si les fichiers de teste sont dans le repertoire logs, n'oubliez pas d'ajouter ../logs/ avant le nom du fichier !")
         print("1. Load session (files stored at tests/*.log)")
@@ -20,6 +24,10 @@ def menu(n):
         print("q to quit")
 
 def regen(N, lam):
+    """
+        Regeneration des cles privees et publiques
+    """
+
     #Exemple d'utilisation
     print("Setting up...")
     (public_keys, n), private_keys = Setup(N, lam)
@@ -38,6 +46,10 @@ def regen(N, lam):
     return private_keys, public_keys, lam, N, n
 
 def retrieve_data(file_name):
+    """
+        Extraction des cles a partir d'un nom du fichier
+    """
+
     global loaded_data
     try:
         with open(file_name, 'r') as fp:

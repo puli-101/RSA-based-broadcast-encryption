@@ -1,6 +1,10 @@
 from arithmetics import *
 import os
 
+"""
+    PREMIERE IMPLEMENTATION DE L'ALGORITHME RSA
+"""
+
 alice = {'e' : 0, 'd' : 0, 'n' : 0}
 bob = {'e' : 0, 'd' : 0, 'n' : 0}
 
@@ -14,6 +18,10 @@ def menu():
     print("Option : " ,end="")
 
 def test_RSA():
+    """
+        Main : on affiche le menu
+    """
+
     options = [chiffrer_terminal, 
                 chiffrer_fichier,
                 dechiffrer_fichier,
@@ -36,6 +44,9 @@ def test_RSA():
             options[o - 1]()
 
 def generate_key():
+    """
+        Generation des valeurs p,q,e,d
+    """
     p = get_prime_bits(1024)
     q = get_prime_bits(1024)
     n = p * q
@@ -54,6 +65,9 @@ def generate_key():
         exit()
 
 def chiffrer_fichier():
+    """
+        Chiffrement d'un fichier
+    """
     print("Saisissez le nom d'un fichier : ", end="")
     fic = str(input())
 
@@ -78,6 +92,7 @@ def chiffrer_fichier():
 
 def dechiffrer_fichier():
     """
+        Dechiffrement du contenu d'un fichier
         presque la meme chose que chiffrer_fichier
     """
     print("Saisissez le nom d'un fichier : ", end="")
@@ -98,6 +113,9 @@ def dechiffrer_fichier():
     output.close()
 
 def afficher_fichier():
+    """
+        Affichage du contenu du fichier
+    """
     print("Saisissez le nom d'un fichier : ", end="")
     fic = str(input())
 
@@ -111,6 +129,9 @@ def afficher_fichier():
     source.close()
 
 def chiffrer_terminal():
+    """
+        Chiffre un message ecrit dans la terminale
+    """
     print("Saisissez un message : ", end="")
     msg = str(input())
 

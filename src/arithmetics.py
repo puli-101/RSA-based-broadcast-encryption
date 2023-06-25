@@ -6,7 +6,8 @@ from fractions import Fraction
 
 def fast_exp(x, n, mod):
     """
-        O(log n) algorithme vu en cours d'algo, version iterative
+        Exponentiation rapide basee sur l'elevation au carre
+        O(log(log(n)) * log(n) ) algorithme vu en cours d'algo, version iterative
     """
     exp = 1
     if x == 0:
@@ -22,8 +23,10 @@ def fast_exp(x, n, mod):
 
 def fast_inverse(p, mod):
     """
+        Algorithme pour trouver l'inverse de p mod (mod)
         Taken from "Guide to Elliptic Curve Cryptography"
     """
+
     u = p 
     v = mod
     x1 = 1
@@ -40,10 +43,12 @@ def fast_inverse(p, mod):
 
 def millerRabin(n):
     """
+        Test de primalite
         Cryptography Made Simple, Algorithm 2.2 page 30
         True : Composite
         False : Probably prime
     """
+
     s = 0
     m = n - 1
 
@@ -68,8 +73,9 @@ def millerRabin(n):
 
 def get_prime_range(lowerBound, upperBound):
     """
-        Genere nombre premier entre lowerBound et upperBound
+        Generation d'un nombre premier entre lowerBound et upperBound
     """
+
     p = 0
     while True:
         p = randint(lowerBound, upperBound)
@@ -80,16 +86,26 @@ def get_prime_range(lowerBound, upperBound):
 
 def get_prime_digits(n):
     """
-        Genere un nombre premiere de n chiffres
+        Generation d'un nombre premiere de n chiffres
     """
+
     lowerBound = 10**n
     upperBound = lowerBound * 10
     return get_prime_range(lowerBound, upperBound)
 
 def get_prime_bits(n):
+    """
+        Generation d'un nombre premier de bitsize lambda
+    """
+
     return get_prime_range(2 ** (n - 1),2 ** n)
 
 def pgcd(a,b):
+    """
+        Algorithme d'euclide pour le pgcd
+        Debordement de pile quand a et b assez grands
+    """
+
     if (b == 0):
         return a
     return pgcd(b, a%b)
@@ -98,6 +114,7 @@ def get_invertible(phi):
     """
         Trouve un nombre inversible modulo phi
     """
+
     for i in range(3, phi):
         if (pgcd(i,phi) == 1):
             return i
@@ -112,6 +129,10 @@ def chinese_remainder_prime_modules(alpha_p, alpha_q, p, q):
     return (alpha_p * q * get_inverse_prime_module(q, p) + alpha_q * p * get_inverse_prime_module(p,q)) % (p*q)
 
 def CRT(gamma_1,modg1,gamma_2,modg2):
+    """
+        Algorithme du theoreme chinois des restes generaliste
+    """
+
     M=modg1*modg2
     M1=M % modg1
     M2=M % modg2
@@ -122,13 +143,15 @@ def CRT(gamma_1,modg1,gamma_2,modg2):
 
 def get_inverse_prime_module(a, p):
     """
-        algorithme pour trouver l'inverse de a mod p où p est premier
+        Algorithme pour trouver l'inverse de a mod p où p est premier
+        On applique le petit theoreme de Fermat
     """
+
     return pow(a, p - 2, p)
 
 def find_generator(p, primes = []):
     """
-        etant donne p et la factorisation de phi(p) (la liste primes) on renvoie un generateur de Zp avec p premier > 2
+        Etant donne p et la factorisation de phi(p) (la liste primes) on renvoie un generateur de Zp avec p premier > 2
         (normalement on connait deja la factorisation de phi(p) par le Setup)
         https://en.wikipedia.org/wiki/Primitive_root_modulo_n
     """

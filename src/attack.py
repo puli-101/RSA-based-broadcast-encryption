@@ -73,8 +73,10 @@ def get_gamma_2sk_gcd(sk, pk, lam, N, n):
 ########## Continued Fractions Attack
 def is_missing_primes(approx, product, lam, n):
     """
-        teste si l'approximation approx = a/b 
-        est egal a 1/(4 * p_l * p_2l) i.e. les 
+        Teste si l'approximation approx = a/b 
+        est egal a 1/(4 * p_l * p_2l) i.e. la valeur manquante
+
+        on a besoin du produit des valeurs connus et le module n
     """
     approx = Fraction(1, approx)
     if approx.denominator != 1:
@@ -99,6 +101,7 @@ def find_primes_from_product_over_n(product, lam, n):
         A chaque etape du developpement on teste si on a deja trouve les valeurs des nombres premiers manquants
         On retourne les valeurs des p_i et p_j manquants
     """
+    
     coefs = []
     fraction = Fraction(int(product), n)
     while True:
@@ -120,6 +123,11 @@ def find_primes_from_product_over_n(product, lam, n):
     return None
 
 def get_gamma_2sk_dev_frac(sk, pk, lam, N, n):
+    """
+        Fonction principale de l'attaque basee sur les fractions continues
+        A partir de deux cles on trouve une factorisation de phi(n)
+    """
+
     #extraction des facteurs premiers connus de p - 1 et q - 1 ou n = p*q
     print("Retrieving all known prime factors of phi(n)...")
     factors = get_factors(sk,pk,lam)
@@ -146,6 +154,7 @@ def get_all_gammas(p0, q0, factors, gamma_1, gamma_2):
         gamma [mod p0*q0produit p_i] =  { gamma_1 mod p0*q0*p1_bar
                                         { gamma_2 mod p1
     """
+
     gamma_lst = []
     for p_i in factors:
         if p_i == p0 or p_i == q0:
@@ -165,7 +174,11 @@ def get_p0_q0(factors, pk, N, n):
     """
         On essaie tous les combinaisons possibles pour trouver p0 et q0
         Peut etre qu'il y a un moyen de faire mieux
+
+        En realite on sait que ||p0|| = ||q0|| = 2||p_i||
+        alors on s'en sert pas
     """
+
     if (factors == N):
         print("Error list of factors doesn't match number of users + 2")
         exit()
@@ -189,6 +202,7 @@ def get_prime_factors_from_2_sk(gamma_1, gamma_2):
     """
         Factorisation de la difference de deux sk
     """
+
     diff = abs(gamma_1 - gamma_2)
     return ecm.factor(diff)
 
@@ -197,6 +211,7 @@ def filter_batches(liste_1, liste_2, lam):
         Fonction pour supprimer les valeurs dupliquees 
         et les nombres premiers de bitsize differente a lambda
     """
+
     l = []
     for x in liste_1:
         if x >= 2**(lam-1):
@@ -208,6 +223,11 @@ def filter_batches(liste_1, liste_2, lam):
     return l
 
 def get_factors(sk,pk,lam):
+    """
+        A partir d'une liste des cles privees on factorise et extrait 
+        les valeurs connues
+    """
+
     g_i, y_i = pk
     #on factorise la difference de deux sk
     batch = get_prime_factors_from_2_sk(sk[0], sk[1])

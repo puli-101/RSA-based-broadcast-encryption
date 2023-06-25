@@ -8,19 +8,19 @@ import json
 f = None
 debug = False
 
+
 def is_missing_primes(approx, product, lam, n):
     """
-        teste si l'approximation approx = a/b 
-        est egal a 1/(4 * p_l * p_2l) i.e. les 
+        Teste si l'approximation approx = a/b 
+        est egal a 1/(4 * p_l * p_2l) i.e. la valeur manquante
     """
+
     approx = Fraction(1, approx)
     if approx.denominator != 1:
         return False
     
-    #print("Testing possible solution")
     #si l'approximation est bonne 
     #pour tout x dans Zn, x ^ (product * approx) = 1 mod n
-
     for i in range(0,20):
         x = randint(2, n - 2)
         if pow(x, product * approx.numerator, n) != 1:
@@ -57,10 +57,13 @@ def find_primes_from_product_over_n(product, lam, n):
     return None
 
 def get_gamma_2sk_dev_frac(sk, pk, lam, N, n, factors):
-    #extraction des facteurs premiers connus de p - 1 et q - 1 ou n = p*q
-    #print("Retrieving all known prime factors of phi(n)...")
-    #factors = get_factors(sk,pk,lam)
-    #print(factors)
+    """
+        A partir de la factorisation de p'q' = produit des facteurs connues
+        on determine le pro
+
+        True si on a trouve la valeur 
+        False sinon
+    """
     global f
     start_time = time.time()
     
@@ -76,12 +79,8 @@ def get_gamma_2sk_dev_frac(sk, pk, lam, N, n, factors):
     f.write(attack_time)
 
     if approx == None:
-        #print("Fatal Error: unable to factor p - 1 and q - 1")
         return False
     
-    #missing = ecm.factor(Fraction(1, approx).numerator)
-    #print("Missing primes : ", missing)
-
     return True
 
 if __name__ == "__main__":
@@ -93,6 +92,7 @@ if __name__ == "__main__":
     print("Please execute this code from the folder src/")
     input("Press Enter to continue...")
     
+    #on extrait tous les logs du repertoire logs et on applique l'attaque
     for file_name in os.scandir("../logs"):
         if not file_name.is_file():
             continue

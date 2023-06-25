@@ -39,6 +39,10 @@ def get_half_primes(N, lam, secondHalf):
     return (primes, p0, p)
     
 def Setup(N, lam):
+    """
+        Configuration initial : generation des cles en fonction de N et lam
+    """
+
     primes = []
     p0 = 1
     q0 = 1
@@ -120,6 +124,10 @@ def Setup(N, lam):
 
 
 def Enc(public_keys, T, N, n):
+    """
+        Test de chiffrement : generation de kT et z
+    """
+    
     r = randint(2, n)
     y = 1
     g = 1
@@ -133,4 +141,8 @@ def Enc(public_keys, T, N, n):
     return kT, z
 
 def Dec(private_key, z, n):
+    """
+        Test de dechiffrement : on retrouve kT a partir de z
+    """
+
     return pow(z,private_key,n)
