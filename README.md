@@ -12,8 +12,8 @@ To run certain programs it is required to install
 
 Execution
 
-    - Additionnally it is best to run the main program main.py from the "scr/" folder
-    - After generating multiple setup configurations, to test the continued fractions attack one needs to execute the "test_continue_fractions.py" file from the "src/" folder
+- Additionnally it is best to run the main program main.py from the "scr/" folder
+- After generating multiple setup configurations, to test the continued fractions attack one needs to execute the "test_continue_fractions.py" file from the "src/" folder
 
 Made by
 
